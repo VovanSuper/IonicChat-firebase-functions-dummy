@@ -1,0 +1,83 @@
+{
+  "project_info": {
+    "project_number": "192464003064",
+    "firebase_url": "https://test-fcm-messaging-f7aa5.firebaseio.com",
+    "project_id": "test-fcm-messaging-f7e87",
+    "storage_bucket": "test-fcm-messaging-f7ddfav7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1924635454564:android:4adsfec6748e0",
+        "android_client_info": {
+          "package_name": "com.dealapp.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "19246400dadf4-9hiv09de2varte3fa3gasdfg23ras9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6SodAFy6fEpR9V-4fZ5f_o3mMnuHKLIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1924653434l8gejmb3lsc02lr1ef7asdfa354fas.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "192464003064-vgle6sd0p5m7asdf3rasdfasdfgleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.dealapp.app.beta"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:192464asdf4fa4:android:6bf9fd89asdfasdf0d",
+        "android_client_info": {
+          "package_name": "com.vovansuper.tester.beta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "192464003064-9hiv09asdfadfcumpfj6j6f5scaasdf4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzF3fadGGR3t9V-4fZ5f_o3mMnuHKLIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "19244555543-l8gejmGDFDFsad4061u18uf.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1924635454564-vgle6sd0pasdft44gsdga3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.deal.app.beta"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

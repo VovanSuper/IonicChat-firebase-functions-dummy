@@ -1,0 +1,20 @@
+{
+  "name": "firebase-admin-test",
+  "version": "0.0.2",
+  "author": "Vladimir Ovsyukov",
+  "license": "ISC",
+  "description": "Test push notifications using firebase admin sdk with node.js",
+  "main": "lib/tester.js",
+  "scripts": {
+    "start": "npx ts-node tester.ts"
+  },
+  "keywords": [
+    "firebase",
+    "fcm",
+    "rtdb"
+  ],
+  "devDependencies": {
+    "firebase-admin": "^8.7.0",
+    "ts-node": "^8.4.1"
+  }
+}
