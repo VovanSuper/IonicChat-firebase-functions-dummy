@@ -50,7 +50,8 @@ export class ChatService {
           this.db.push(`chats/${currUserID}`, { messageKey: key }).pipe(
             map(newRef => {
               newRef.update({
-                'newData': 'Hello'
+                'from_': currUserID,
+                'to_': currPartnerID
               }, (err) => {
                 if (err) {
                   console.log(err)
@@ -63,7 +64,8 @@ export class ChatService {
           this.db.push(`chats/${currPartnerID}`, { messageKey: key }).pipe(
             map(newRef => {
               newRef.update({
-                'newData': 'Hello'
+                'from_': currUserID,
+                'to_': currPartnerID
               }, (err) => {
                 if (err) {
                   console.log(err)

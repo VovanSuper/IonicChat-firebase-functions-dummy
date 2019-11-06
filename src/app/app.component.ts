@@ -1,17 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { PushService } from 'src/app/services/push.service';
 import { ToastrService, ToastResultType } from 'src/app/services/toastr.service';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
   constructor(
     private platform: Platform,
     private splashScreen: SplashScreen,
@@ -37,7 +38,7 @@ export class AppComponent {
       //   () => console.log('compl...')
       // );
 
-      this.pushSvc.onMessage().subscribe(
+      this.pushSvc.onMessage().pipe(untilDestroyed(this)).subscribe(
         (val) => {
           let { title, body, data } = val;
           return this.toastr.getToast({
@@ -49,4 +50,7 @@ export class AppComponent {
         })
     });
   }
+
+  ngOnDestroy() { }
+
 }

@@ -1,6 +1,7 @@
 {
   "name": "push-test",
-  "version": "0.0.3",
+  "version": "0.1.3",
+  "license": "GNU LGPLv3",
   "author": {
     "name": "vovan suppa",
     "email": "vovansuper@mail.ru"
@@ -9,6 +10,7 @@
     "ng": "ng",
     "start": "ionic serve --debug --source-map --port 8082",
     "android": "ionic cordova run android -lc --source-map --debug --emulator",
+    "build:android": "ionic cordova build android --debug --source-map",
     "prefbuild:dev": "rimraf platforms/ plugins/ www/",
     "build:dev": "ionic cordova build android --debug --source-map -- --minSdkVersion=23",
     "test": "ng test",
@@ -36,6 +38,7 @@
     "core-js": "^3.3.4",
     "firebase": "^7.2.2",
     "firebase-functions": "^3.3.0",
+    "ngx-take-until-destroy": "^5.4.0",
     "rxjs": "^6.5.1",
     "tslib": "^1.10.0",
     "zone.js": "^0.10.2"

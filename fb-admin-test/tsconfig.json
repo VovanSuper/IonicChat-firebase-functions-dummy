@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
+    "pretty": true,
     "outDir": "lib",
     "sourceMap": true,
-    "strict": true,
-    "target": "es2017"
+    "target": "es2017",
+    "lib": [
+      "es2018"
+    ],
+  },
+  "typeAcquisition": {
+    "enable": true
   }
 }

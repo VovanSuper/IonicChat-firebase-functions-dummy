@@ -29,15 +29,7 @@ export class ToastrService {
       color: operationResult,
       header,
       message,
-      showCloseButton: true,
-      buttons:[
-        {
-          text: 'Close',
-          handler: () => {
-            this.dismissToast(newToast)
-          }
-        }
-      ]
+      showCloseButton: true
     });
     await newToast.present();
     return newToast;

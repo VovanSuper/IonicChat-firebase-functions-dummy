@@ -9,6 +9,7 @@ import { ChatService } from 'src/app/services/chats.service';
 import { IChatMsg } from 'src/app/models/IChatMsg';
 import { IonContent } from '@ionic/angular';
 import { userAva, partnerAva } from './avatar'
+import { untilDestroyed } from 'ngx-take-until-destroy';
 
 @Component({
   selector: 'app-chat',
@@ -31,6 +32,7 @@ export class ChatPage implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.partner$ = this.accRoute.params.pipe(
+      untilDestroyed(this),
       concatMap(
         (paramMap: Params) => {
           let partnerID = paramMap['id'];
@@ -52,7 +54,7 @@ export class ChatPage implements OnInit, AfterViewInit {
 
   send(message: string) {
     this.chatSvc.createChatMsg({ currUserID: this.currentUser.id, currPartnerID: this.currentPartner.id, message }).pipe(
-      // take(1),
+      take(1),
       concatMap(val => {
         return of(val);
       })
@@ -64,6 +66,7 @@ export class ChatPage implements OnInit, AfterViewInit {
 
   private getMessagesForCurrPartner() {
     this.user$ = this.userSvc.getCurrentUserInfo().pipe(
+      untilDestroyed(this),
       mergeMap(
         currUsr => {
           this.currentUser = currUsr;
@@ -72,6 +75,7 @@ export class ChatPage implements OnInit, AfterViewInit {
 
     // this.messages$ = user$.pipe(
     this.user$.pipe(
+      untilDestroyed(this),
       combineLatest(this.partner$),
       // combineLatest(partner$, user$).pipe(
       concatMap(([user, partner]) => {

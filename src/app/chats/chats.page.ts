@@ -6,6 +6,7 @@ import { QueryFn } from '@angular/fire/database';
 import { Router } from '@angular/router';
 import { Observable, throwError } from 'rxjs';
 import { concatMap, map, catchError } from 'rxjs/operators';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 
 @Component({
   selector: 'app-chats',
@@ -20,9 +21,9 @@ export class ChatsPage implements OnInit {
   constructor(private router: Router, private userSvc: UserService, private authSvc: AuthService) { }
 
   ngOnInit() {
-    this.currUser$ = this.userSvc.getCurrentUserInfo();
-    
+    this.currUser$ = this.userSvc.getCurrentUserInfo().pipe(untilDestroyed(this));
     this.chats$ = this.currUser$.pipe(
+      untilDestroyed(this),
       concatMap((currUser: Partial<IUser>) => {
         return this.userSvc.getAllUsers({ postQueryFn: (item: IUser) => item.id !== currUser.id })
       }),

@@ -50,7 +50,7 @@ export class UserService {
   getCurrentUserInfo(): Observable<IUser | null> {
     return this._currentUser$$.asObservable().pipe(
       // distinctUntilChanged(),
-      concatMap((currUser: Partial<IUser>) => iif(() => (currUser && ('id' in currUser)), this.getDbUserById((currUser) ? currUser.id : null), of(null))),
+      concatMap(({ id }) => iif(() => (!!id), this.getDbUserById((!!id) ? id : null), of(null))),
       tap(user => console.log(`[UserSvc->getCurrentUserInfo()] :::::::::     ${JSON.stringify(user)}`)),
       catchError(err => {
         // console.warn(`[UserSvc->getCurrentUserInfo()]:::: ${JSON.stringify(err)}`);
