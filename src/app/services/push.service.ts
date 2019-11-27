@@ -23,12 +23,12 @@ export class PushService {
             } else {
               return of(null);
             }
-          }),
-          catchError(err => {
-            console.warn(`PushSvc->ctor() :::::: ${JSON.stringify(err)}`);
-            return throwError(err);
           })
         )
+      }),
+      catchError(err => {
+        console.warn(`PushSvc->ctor() :::::: ${JSON.stringify(err)}`);
+        return throwError(err);
       })
     ).subscribe(
       val => console.log(`Handled FCM Token registration ... ${JSON.stringify(val)}`),

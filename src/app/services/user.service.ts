@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { QueryFn } from '@angular/fire/database';
-import { tap, mergeMap, catchError, map, distinctUntilChanged, concatMap } from 'rxjs/operators';
+import { tap, mergeMap, catchError, map, distinctUntilChanged, concatMap, filter } from 'rxjs/operators';
 import { BehaviorSubject, throwError, iif, of, Observable, ReplaySubject, Subject } from 'rxjs';
 
 import { DbService } from './db.service';
@@ -18,10 +18,11 @@ export class UserService {
     this._currentUser$$ = new BehaviorSubject({ id: this.storeSvc.get('user') });
   }
 
-  getAllUsers({ query, postQueryFn }: { query?: QueryFn, postQueryFn?: (val: Partial<IUser>) => boolean } = { query: null, postQueryFn: (val) => true }) {
+  getAllUsersExptSelf({ query, postQueryFn }: { query?: QueryFn, postQueryFn?: (val: Partial<IUser>) => boolean } = { query: null, postQueryFn: (val) => true }) {
     return new Observable<Array<IUser>>(inner => {
       // this.fDb.list(`users/`, query).pipe(
-      this.fDb.list(`users/`).pipe(
+      const usersPath = 'users/';
+      this.fDb.list(usersPath, query).pipe(
         // distinctUntilChanged(),
         map(users => users as Array<IUser>),
         map(users => users.filter(postQueryFn) as Array<IUser>),
@@ -44,16 +45,17 @@ export class UserService {
 
   unsetCurrUserId(id: string = null) {
     this.delUser();
-    this._currentUser$$.next({ id: null });
+    this._currentUser$$.next(null);
   }
 
   getCurrentUserInfo(): Observable<IUser | null> {
     return this._currentUser$$.asObservable().pipe(
+      // filter(usr => (!!usr && !!usr.id)),
       // distinctUntilChanged(),
       concatMap(({ id }) => iif(() => (!!id), this.getDbUserById((!!id) ? id : null), of(null))),
       tap(user => console.log(`[UserSvc->getCurrentUserInfo()] :::::::::     ${JSON.stringify(user)}`)),
       catchError(err => {
-        // console.warn(`[UserSvc->getCurrentUserInfo()]:::: ${JSON.stringify(err)}`);
+        console.warn(`[UserSvc->getCurrentUserInfo()]:::: ${JSON.stringify(err)}`);
         return throwError(err);
       })
     );
@@ -65,8 +67,8 @@ export class UserService {
 
   getDbUserById(uId: string): Observable<IUser> {
     return this.fDb.get(`users/${uId}`).pipe(
-      map(user => user as IUser)
-      // tap(data => console.log(`User obj ::::   ${JSON.stringify(data)}`))
+      map(user => user as IUser),
+      tap(data => console.log(`[UserSvc->getDbUserById()]:::: User obj ::::   ${JSON.stringify(data)}`))
     );
   }
 

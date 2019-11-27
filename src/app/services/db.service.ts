@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { from, throwError, of, Observable } from 'rxjs';
 import { catchError, shareReplay, map, concatMap } from 'rxjs/operators';
-import { AngularFireDatabase, QueryFn, SnapshotAction, DatabaseSnapshot } from '@angular/fire/database';
+import { AngularFireDatabase, QueryFn, SnapshotAction, DatabaseSnapshot, ChildEvent } from '@angular/fire/database';
+import { AngularFireMessaging, AngularFireMessagingModule } from "@angular/fire/messaging";
 import firebase from 'firebase'
 import { IChatMsg } from 'src/app/models/IChatMsg';
 
@@ -10,7 +11,7 @@ import { IChatMsg } from 'src/app/models/IChatMsg';
 })
 export class DbService {
 
-  constructor(private fDb: AngularFireDatabase) { }
+  constructor(private fDb: AngularFireDatabase, private fMsg: AngularFireMessaging) { }
 
   listSnapshots(path: string, query: QueryFn = null) {
     return new Observable(inner => {
@@ -35,7 +36,7 @@ export class DbService {
 
   list(path: string, query: QueryFn = null) {
     // return new Observable(inner => {
-    return this.fDb.list(path).valueChanges().pipe(
+    return this.fDb.list(path, query).valueChanges().pipe(
       // shareReplay({ bufferSize: 1, refCount: true, windowTime: 300 }),
       map(vals => {
         console.log(`VALS ::::::::::::: ${JSON.stringify(vals)}`);
@@ -52,6 +53,15 @@ export class DbService {
       // );
       // });
     );
+  }
+
+  listChats(path: string, query: QueryFn = null) {
+    const snapshotEvents: ChildEvent[] = ['child_added', 'child_removed'];
+    return this.fDb.list(path).snapshotChanges(snapshotEvents).pipe(
+      map(val => {
+        val
+      })
+    )
   }
 
   update(path: string, data: object) {

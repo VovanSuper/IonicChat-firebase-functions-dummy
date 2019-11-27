@@ -20,13 +20,13 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.loginForm = this.fb.group({
-      'email': ['', [Validators.required, Validators.minLength(1)]],
-      'pass': ['', [Validators.required, Validators.minLength(4)]]
+      'email': ['', [Validators.required, Validators.minLength(1), Validators.email]],
+      'pass': ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
   login(email: string, pass: string) {
-    this.authSvc.logInUser(email, pass).subscribe(val => {
+    this.authSvc.logInUser({ email, pass }).subscribe(val => {
       if (val && typeof val !== 'undefined') {
         let cUId = val.user.uid;
         this.router.navigateByUrl(`/chats`);

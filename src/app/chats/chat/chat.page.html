@@ -9,7 +9,7 @@
 
 <!-- <ng-container *ngIf="messages$ | async; let messages; else noMsg"> -->
 <ion-content>
-  <ng-container *ngIf="messages && messages.length;">
+  <ng-container *ngIf="messages && messages.length; else noMsg">
     <ion-content #contentScroll>
       <ion-grid>
         <ion-row *ngFor="let chat of messages">

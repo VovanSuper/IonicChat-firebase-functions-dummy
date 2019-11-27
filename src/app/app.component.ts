@@ -46,8 +46,8 @@ export class AppComponent implements OnDestroy {
             message: `${body} -- ${JSON.stringify(data)}  ` || 'This is a push',
             duration: 5000,
             operationResult: ToastResultType.NEUTRAL
-          })
-        })
+          });
+        });
     });
   }
 

@@ -1,14 +1,14 @@
 import * as admin from 'firebase-admin';
 import { getAllUserNamesTokens } from './helpers/database';
 import { sendTestToAllTokens, sendToTopic, assignTokensToTopic, createPushMsg } from './helpers/messaging';
-import { register } from './register';
+import { register } from './helpers/register';
 
 
 let app = register();
 
 getAllUserNamesTokens(app).then(userNameTokensMap => {
 
-  const testTopic = `/topics/_TESTERS_GENEREL_PUSH_TOPIC`;
+  const testTopic = `/topics/TESTERS_GENERAL_PUSH_TOPIC`;
   let msg = createPushMsg({
     data: {
       'HELLO': 'Planet'
@@ -17,17 +17,17 @@ getAllUserNamesTokens(app).then(userNameTokensMap => {
     body: 'there ..!'
   });
 
-  let allTokens = [];
+  let tokens = [];
 
   console.log('Tokens :: ');
   for (let i in userNameTokensMap) {
     if (userNameTokensMap[i])
-      allTokens.push(...userNameTokensMap[i])
+      tokens.push(...userNameTokensMap[i])
   }
 
-  console.log(allTokens);
+  console.log(tokens);
 
-  sendTestToAllTokens({ app, tokens: allTokens }).then(_ => process.exit(0));
+  sendTestToAllTokens({ app, tokens }).then(_ => process.exit(0));
   // assignTokensToTopic(app, allTokens, testTopic)
   //   .then(assignResult => {
   //     if (assignResult.errors) {

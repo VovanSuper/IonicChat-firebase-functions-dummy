@@ -23,6 +23,7 @@ log.txt
 npm-debug.log*
 **/google-services.json
 google-services.json
+GoogleService-Info.plist
 /.idea
 /.ionic
 /.sass-cache

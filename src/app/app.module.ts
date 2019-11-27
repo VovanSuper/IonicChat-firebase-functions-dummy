@@ -14,6 +14,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { environment } from 'src/environments/environment';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FirebaseX } from "@ionic-native/firebase-x/ngx";
+import { AngularFireMessagingModule } from '@angular/fire/messaging';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { FirebaseX } from "@ionic-native/firebase-x/ngx";
     AngularFireModule.initializeApp(environment.firebaseConfig, {}),
     AngularFireAuthModule,
     AngularFireDatabaseModule,
+    AngularFireMessagingModule,
     AppRoutingModule
   ],
   providers: [

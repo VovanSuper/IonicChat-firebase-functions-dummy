@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { from, throwError, of } from 'rxjs';
-import { catchError, concatMap, tap, map, mapTo, mergeMap } from 'rxjs/operators';
+import { catchError, concatMap, tap, map, mapTo, mergeMap, take } from 'rxjs/operators';
 import { AngularFireAuth } from "@angular/fire/auth";
 
 import { DbService } from './db.service';
@@ -15,11 +15,11 @@ export class AuthService {
 
   constructor(private router: Router, private fDb: DbService, private fAuth: AngularFireAuth, private userSvc: UserService, private storeSvc: StorageService) { }
 
-  logInUser(email: string, pass: string) {
+  logInUser({ email, pass }: { email: string; pass: string; }) {
     return from(this.fAuth.auth.signInWithEmailAndPassword(email, pass)).pipe(
       concatMap((fbUserCreds: firebase.auth.UserCredential) => {
         let { uid, email, ...rest } = fbUserCreds.user;
-        return this.setDbUserLoggedinStatus(uid, true).pipe(
+        return this.setDbUserLoggedinStatus({ uid, status: true }).pipe(
           mapTo((fbUserCreds))
         )
       }),
@@ -32,13 +32,13 @@ export class AuthService {
     );
   }
 
-  signUpNewUser(email: string, pass: string, username?: string) {
+  signUpNewUser({ email, pass, username }: { email: string; pass: string; username?: string; }) {
     return from(this.fAuth.auth.createUserWithEmailAndPassword(email, pass)).pipe(
       concatMap(fbUserCreds => {
         let { uid, email, ...rest } = fbUserCreds.user;
         return this.userSvc.upsertDbUser({ id: uid, name: username, email }).pipe(
           concatMap(_user => {
-            return this.setDbUserLoggedinStatus(uid, true).pipe(
+            return this.setDbUserLoggedinStatus({ uid, status: true }).pipe(
               mapTo(fbUserCreds)
             )
           })
@@ -60,15 +60,15 @@ export class AuthService {
     return from(this.fAuth.auth.signOut()).pipe(
       mergeMap(_ => {
         this.userSvc.unsetCurrUserId();
-        return this.setDbUserLoggedinStatus(currUserId, false).pipe(
+        return this.setDbUserLoggedinStatus({ uid: currUserId, status: false }).pipe(
           mapTo(this.router.navigateByUrl('/auth/login'))
         )
       })
     );
   }
 
-  private setDbUserLoggedinStatus(uid: string, status = true) {
-    return this.fDb.set(`users/${uid}/isLoggedIn`, status);
+  private setDbUserLoggedinStatus({ uid, status = true }: { uid: string; status?: boolean; }) {
+    return this.fDb.set(`users/${uid}/isLoggedIn`, status).pipe(take(1));
   }
 
 

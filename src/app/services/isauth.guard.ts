@@ -15,7 +15,7 @@ export class IsAuthGuard implements CanActivate {
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
     return this.userSvc.getCurrentUserInfo().pipe(
       map(currUser => {
-        if (!currUser || typeof currUser === 'undefined') {
+        if (!!!currUser || !!!currUser.id) {
           this.router.navigateByUrl('/auth/login');
           return false;
         }

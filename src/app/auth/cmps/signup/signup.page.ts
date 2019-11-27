@@ -26,7 +26,7 @@ export class SignupPage implements OnInit {
   }
 
   signup(email: string, pass: string, username: string) {
-    this.authSvc.signUpNewUser(email, pass, username).subscribe(userCreds => {
+    this.authSvc.signUpNewUser({ email, pass, username }).subscribe(userCreds => {
       if (!userCreds || typeof userCreds === 'undefined') {
         throw new Error('No UserCredintials in Database...');
       }

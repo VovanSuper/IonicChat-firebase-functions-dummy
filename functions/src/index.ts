@@ -1,4 +1,4 @@
-import { database } from 'firebase-functions';
+import { database as funcdb } from 'firebase-functions';
 
 import * as admin from 'firebase-admin';
 
@@ -8,7 +8,7 @@ import * as admin from 'firebase-admin';
 // }
 const app = admin.initializeApp();
 
-export const pushtouser = database.ref('users/{userId}/isLoggedIn').onUpdate(async (change, ctx) => {
+export const pushtouser = funcdb.ref('users/{userId}/isLoggedIn').onUpdate(async (change, ctx) => {
   const isLoggedIn = change.after.val();
   const userId = ctx.params['userId'];
 
@@ -18,12 +18,30 @@ export const pushtouser = database.ref('users/{userId}/isLoggedIn').onUpdate(asy
       userName = unameSnap.val() as string;
     }
 
+    const payload = {
+      title: `Hello ${userName}`,
+      body: `You are ${!!isLoggedIn ? 'loged in' : 'logged out'}`,
+      channel: 'Default_Channel',
+      userId
+    }
+
     // const userId = 'WYOCO90XAuehAb8foA292JE7WgJ3';
     const msgPayload: admin.messaging.MessagingPayload = {
-      // data: { userId },
+      data: { userId: payload.userId },
       notification: {
-        title: `Hello ${userName}`,
-        body: `You logged  :  ${!!isLoggedIn}`
+        title: payload.title,
+        body: payload.body,
+        tag: payload.channel
+      }
+    };
+
+    const notificationPaylod: admin.messaging.ApnsPayload = {
+      aps: {
+        alert: {
+          title: payload.title,
+          body: payload.body
+        },
+        threadId: payload.channel
       }
     };
 

@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Params } from '@angular/router';
-import { mergeMap, concatMap, map, combineLatest, take } from 'rxjs/operators';
+import { mergeMap, concatMap, map, combineLatest, take, filter } from 'rxjs/operators';
 import { of, Observable } from 'rxjs';
 
 import { UserService } from 'src/app/services/user.service';
@@ -16,7 +16,7 @@ import { untilDestroyed } from 'ngx-take-until-destroy';
   templateUrl: './chat.page.html',
   styleUrls: ['./chat.page.scss'],
 })
-export class ChatPage implements OnInit, AfterViewInit {
+export class ChatPage implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('contentScroll', { static: false }) contentScroll: IonContent;
   newMessage = '';
   currentUser: IUser = null;
@@ -66,6 +66,7 @@ export class ChatPage implements OnInit, AfterViewInit {
 
   private getMessagesForCurrPartner() {
     this.user$ = this.userSvc.getCurrentUserInfo().pipe(
+      filter(user => !!user),
       untilDestroyed(this),
       mergeMap(
         currUsr => {
@@ -107,5 +108,6 @@ export class ChatPage implements OnInit, AfterViewInit {
     this.scrollToBottom(200);
   }
 
+  ngOnDestroy() { }
 
 }
