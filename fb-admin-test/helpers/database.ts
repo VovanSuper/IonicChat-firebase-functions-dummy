@@ -1,20 +1,10 @@
-import * as admin from 'firebase-admin';
+import { database, app } from 'firebase-admin';
 
-interface IUser {
-  id: string;
-  name: string;
-  email: string;
-  isLoggedIn: boolean;
-  pushTokens: string[];
-}
-
-const getAllUserNamesTokens = (app: admin.app.App): Promise<Map<string, string[]>> => new Promise((resolve, reject) => {
-  admin.database(app).ref('users/').on('value', (snap: admin.database.DataSnapshot) => {
+const getAllUserNamesTokens = (app: app.App): Promise<Map<string, string[]>> => new Promise((resolve, reject) => {
+  database(app).ref('users/').on('value', (snap: database.DataSnapshot) => {
     let results: Map<string, string[]> = new Map();
-    // let users: IUser[] = [];
     snap.forEach(item => {
-      // users.push(item.val());
-      results[item.key] = item.child('pushTokens').hasChildren() && !!(item.child('pushTokens').val()) && item.child('pushTokens').val();
+      results[item.key] = !!(item.child('pushTokens').val()) && item.child('pushTokens').hasChildren() && item.child('pushTokens').val();
     });
     // let tokens: string[] = [];
     // users.forEach(usr => {
@@ -25,41 +15,51 @@ const getAllUserNamesTokens = (app: admin.app.App): Promise<Map<string, string[]
     // console.log(results)
     resolve(results);
   });
-})
+});
 
-const getUserPushTokens = ({ app, userId }: { app: admin.app.App; userId: string; }): Promise<string[]> => {
-  if (!userId || !userId.length) { throw new Error('Provided valid UserId..!:') }
+const getUserPushTokens = ({ app, userId }: { app: app.App; userId: string; }): Promise<string[]> => {
+  if (!userId || !userId.length) { throw new Error('Provided valid UserId..!:'); }
 
   return new Promise((resolve, reject) => {
-    admin.database(app).ref(`users/${userId}/pushTokens`).on('value', (tokensSnapshot, _prevKey) => {
+    database(app).ref(`users/${userId}/pushTokens`).on('value', (tokensSnapshot, _prevKey) => {
       if (!tokensSnapshot) {
         return reject('No tokens');
       }
-      let tokens = (tokensSnapshot.val() instanceof Array) ? [...tokensSnapshot.val()] : [tokensSnapshot.val()];
+      let tokens = (Array.isArray(tokensSnapshot.val())) ? [...tokensSnapshot.val()] : [tokensSnapshot.val()];
       console.log(`All user FCM Tokens ::: ${JSON.stringify(tokens)}`);
       return resolve(tokens);
-    })
+    });
   });
-}
+};
 
-const deleteFailedTokens = (app: admin.app.App, tokens: string[] | string) => {
+const removeTokens = ({ app, tokens }: { app: app.App, tokens: string[] | string; } = { app: null, tokens: [] }) => {
+  if (!app || !tokens.length) throw new Error('app.App should be defined; tokens should be provided..!');
+
   tokens = (Array.isArray(tokens)) ? [...tokens] : [tokens];
-  let refs = tokens.map(token => {
-    let ref = admin.database(app).ref(`users/`).on('value', usersSnapshot => {
-      usersSnapshot.forEach(userSnapshot => {
-        userSnapshot.child('pushTokens').hasChildren()
-      })
-    })
-    // .child('pushTokens').orderByValue().equalTo(token);
-    // ref.on('value', (tokenSnapshot: admin.database.DataSnapshot) => {
-    //   tokenSnapshot.ref.remove();
-    // })
-  })
-}
+  try {
+    database(app).ref(`users/`).once('value',
+      usersSnapshot => {
+        usersSnapshot.forEach(userSnapshot => {
+          const userPushTokensRef = usersSnapshot.child('pushTokens');
+          const allUserTokens = userPushTokensRef.exists() && userPushTokensRef.hasChildren() && userPushTokensRef.val() as string[] | null;
+          allUserTokens && allUserTokens.length && allUserTokens.forEach(uToken =>
+            tokens.includes(uToken) &&
+            userPushTokensRef.ref.child(uToken).remove(err => {
+              if (err) {
+                throw err;
+              }
+            })
+          );
+        });
+      },
+      err => { throw err; });
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 export {
-  IUser,
   getAllUserNamesTokens,
   getUserPushTokens,
-  deleteFailedTokens
+  removeTokens as deleteFailedTokens
 };

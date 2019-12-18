@@ -1,51 +1,59 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button slot="start" defaultHref="/chats"></ion-back-button>
-    </ion-buttons>
-    <ion-title slot="end" *ngIf="currentPartner">Chat to  {{currentPartner.name}}</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ng-container *ngIf="vm$ | async as vm; else noData">
+  <ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-back-button slot="start" defaultHref="/chats"></ion-back-button>
+      </ion-buttons>
+      <ion-title slot="end" *ngIf="vm.currentPartner as currentPartner">{{vm.title}}</ion-title>
+    </ion-toolbar>
+  </ion-header>
 
-<!-- <ng-container *ngIf="messages$ | async; let messages; else noMsg"> -->
-<ion-content>
-  <ng-container *ngIf="messages && messages.length; else noMsg">
-    <ion-content #contentScroll>
-      <ion-grid>
-        <ion-row *ngFor="let chat of messages">
-          <ion-col col-12>
-            <ion-item lines="none" class="chat-item">
-              <div class="chat-wrapper {{chat.isSelfMsg ? 'chat-msg__self' : ''}}" slot="{{chat.isSelfMsg ? 'end' : 'start'}}">
-                <!-- <ion-icon class="chat-ava" size="large" name="contact"></ion-icon> -->
-                <ion-avatar class="ava-wrapper">
-                  <img class="chat-ava" [src]="chat.isSelfMsg ? userAvatarData : partnerAvatarData"  alt="avatar"/>
-                </ion-avatar>
-                <div class="chat-msg">
-                  {{chat?.message}}
+  <ion-content>
+    <ng-container *ngIf="vm.messages as messages; else noMsg">
+      <!-- <ng-container *ngIf="messages && messages.length; else noMsg"> -->
+      <ion-content #contentScroll>
+        <ion-grid>
+          <ion-row *ngFor="let chat of messages">
+            <ion-col col-12>
+              <ion-item lines="none" class="chat-item">
+                <div class="chat-wrapper {{chat.isSelfMsg ? 'chat-msg__self' : ''}}"
+                  slot="{{chat.isSelfMsg ? 'end' : 'start'}}">
+                  <!-- <ion-icon class="chat-ava" size="large" name="contact"></ion-icon> -->
+                  <ion-avatar class="ava-wrapper">
+                    <img class="chat-ava" [src]="chat.isSelfMsg ? userAvatarData : partnerAvatarData" alt="avatar" />
+                  </ion-avatar>
+                  <div class="chat-msg">
+                    {{chat?.message}}
+                  </div>
                 </div>
-              </div>
-            </ion-item>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
-    </ion-content>
-  </ng-container>
-  <!-- </ng-container> -->
-  
-  <ng-template #noMsg>
-    <p>You have not yet chated with the User... </p>
-    <p>Write him right now!</p>
-  </ng-template>
-  
-</ion-content>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-content>
+      <!-- </ng-container> -->
+    </ng-container>
+
+    <ng-template #noMsg>
+      <p>You have not yet chated with the User... </p>
+      <p>Write him right now!</p>
+    </ng-template>
+  </ion-content>
+</ng-container>
+
+<ng-template #noData>
+  <h3>No Data..!</h3>
+</ng-template>
 
 <ion-footer>
   <div class="new-msg-block">
 
     <div class="msg-area">
-      <ion-textarea #messageBox [(ngModel)]="newMessage" autofocus="true" (keyup.control.enter)="send(newMessage)" placeholder="Enter your message..."> </ion-textarea>
+      <ion-textarea #messageBox [(ngModel)]="newMessage" autofocus="true" (keyup.control.enter)="send(newMessage)"
+        placeholder="Enter your message..."> </ion-textarea>
     </div>
-    <ion-fab-button class="msg-btn" color="default" (click)="send(newMessage)" [disabled]="!messageBox.value || !messageBox.value.trim().length">
+    <ion-fab-button class="msg-btn" color="default" (click)="send(newMessage)"
+      [disabled]="!messageBox.value || !messageBox.value.trim().length">
       <ion-icon size="large" name="arrow-dropright"></ion-icon>
     </ion-fab-button>
   </div>

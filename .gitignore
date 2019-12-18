@@ -35,6 +35,8 @@ GoogleService-Info.plist
 /platforms
 /plugins
 /www
+/device_build_tooling
+!/device_build_tooling/ion-chat-tester__dummy.jks
 
 # Optional npm cache directory
 .npm

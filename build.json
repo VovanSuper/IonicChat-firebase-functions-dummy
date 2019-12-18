@@ -1,0 +1,18 @@
+{
+  "android": {
+      "debug": {
+          "keystore": "./device_build_tooling/ion-chat-tester.jks",
+          "storePassword": "IonChatPass1",
+          "alias": "ion-chat-fb-dummy",
+          "password" : "IonChatPass1",
+          "keystoreType": "pkcs12"
+      },
+      "release": {
+          "keystore": "./device_build_tooling/ion-chat-tester.jks",
+          "storePassword": "IonChatPass1",
+          "alias": "ion-chat-fb-dummy",
+          "password" : "IonChatPass1",
+          "keystoreType": "pkcs12"
+      }
+  }
+}

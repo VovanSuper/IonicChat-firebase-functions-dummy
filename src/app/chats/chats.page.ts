@@ -5,7 +5,7 @@ import { IUser } from 'src/app/models/IUser';
 import { QueryFn } from '@angular/fire/database';
 import { Router } from '@angular/router';
 import { Observable, throwError, combineLatest } from 'rxjs';
-import { concatMap, map, catchError } from 'rxjs/operators';
+import { concatMap, map, catchError, tap, filter } from 'rxjs/operators';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 
 @Component({
@@ -16,31 +16,43 @@ import { untilDestroyed } from 'ngx-take-until-destroy';
 export class ChatsPage implements OnInit, OnDestroy {
   private currUser$: Observable<IUser>;
   private chats$: Observable<IUser[]>;
-  public vm$: Observable<{ currUser: IUser, chats: IUser[] }>;
+  private title$: Observable<string>;
+  public vm$: Observable<{ currUser: IUser, chats: IUser[]; title: string; }>;
 
   constructor(private router: Router, private userSvc: UserService, private authSvc: AuthService) { }
 
   ngOnInit() { }
 
   ionViewWillEnter() {
-    this.currUser$ = this.userSvc.getCurrentUserInfo().pipe(untilDestroyed(this));
+    this.currUser$ = this.userSvc.getCurrentUserInfo().pipe(
+      untilDestroyed(this),
+      tap(usr => console.log(`[ChatsPage->ionViewWillEnter()]:: curr user ${JSON.stringify(usr)}`))
+    );
     this.chats$ = this.currUser$.pipe(
       untilDestroyed(this),
       concatMap((currUser: Partial<IUser>) => {
-        return this.userSvc.getAllUsersExptSelf({ postQueryFn: (item: IUser) => item.id !== currUser.id })
+        return this.userSvc.getAllUsersExptSelf({ postQueryFn: (item: IUser) => item.id !== currUser.id });
       }),
-      map(users => [...users] as IUser[]),
+      map((users = []) => [...users] as Array<IUser>),
       catchError(err => {
         console.warn(err);
         return throwError(err);
       })
     );
+    this.title$ = this.currUser$.pipe(
+      untilDestroyed(this),
+      filter(usr => !!usr),
+      map(usr => `Hello ${usr.name}`)
+    );
+
     this.vm$ = combineLatest(
       this.currUser$,
       this.chats$,
-      (currUser, chats) => {
-        return { currUser, chats };
-      }
+      this.title$
+    ).pipe(
+      map(([currUser, chats, title]) => {
+        return { currUser, chats, title };
+      })
     );
   }
 
@@ -48,7 +60,7 @@ export class ChatsPage implements OnInit, OnDestroy {
     this.authSvc.logOut().subscribe(
       _ => console.log('You logged out ..!')
       , err => console.warn(err)
-    )
+    );
   }
 
   gotoChat(id: string) {

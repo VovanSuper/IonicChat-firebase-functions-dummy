@@ -1,4 +1,4 @@
-import * as admin from 'firebase-admin';
+import { FirebaseError } from 'firebase-admin';
 
 export const tokenInvalideCodes = [
   'messaging/registration-token-not-registered',
@@ -11,17 +11,18 @@ interface IErrorMsgCode {
   message: string;
 }
 
-const errorsToMsgCodePairs = (errors: { err: admin.FirebaseError, ind: number }[], tokens: string[] | string) => {
+const errorsToMsgCodePairs = ({ errors, tokens }: { errors: { err: FirebaseError, ind: number; }[], tokens: string[] | string; }): IErrorMsgCode[] | null => {
   tokens = (Array.isArray(tokens)) ? [...tokens] : [tokens];
-  if (errors && tokens) {
+  if (errors && tokens && tokens.length) {
     errors = (errors instanceof Array) ? [...errors] : [errors];
-    return errors.map((error: { err: admin.FirebaseError | undefined, ind: number }) => {
+    return errors.map((error: { err: FirebaseError | undefined, ind: number; }) => {
       if (error && typeof error !== 'undefined') {
         return { code: error['code'], message: error['message'], token: tokens[error.ind] } as IErrorMsgCode;
       }
     });
   }
-}
+  return null;
+};
 
 
 export { IErrorMsgCode, errorsToMsgCodePairs };

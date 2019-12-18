@@ -1,13 +1,16 @@
 {
   "name": "firebase-admin-push-test",
   "version": "0.1.5",
-  "author": "Vladimir Ovsyukov",
   "license": "GNU LGPLv3",
+  "author": {
+    "name": "Vladimir Ovsyukov",
+    "email": "ovsyukov@yandex.com"
+  },
   "description": "Test push notifications using firebase admin sdk with node.js",
   "main": "lib/tester.js",
   "engines": {
-    "node": ">=10.0.0",
-    "npm": ">6.9.0"
+    "node": ">=10.14.1",
+    "npm": ">=6.10.2"
   },
   "scripts": {
     "start": "npx ts-node tester.ts"
@@ -19,9 +22,9 @@
   ],
   "devDependencies": {
     "firebase-admin": "^8.8.0",
-    "firebase-tools": "^7.8.1",
-    "ts-node": "^8.5.2",
-    "typescript": "^3.7.2",
+    "firebase-tools": "^7.9.0",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.3",
     "ts-lint": "^4.5.1",
     "tslib": "^1.10.0"
   }

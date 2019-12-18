@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ToastController, IonButton,  } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 
 export enum ToastResultType {
   SUCCESS = 'success',
@@ -15,9 +15,10 @@ export class ToastrService {
 
   constructor(private toastCtrl: ToastController) { }
 
-  public getToast = async ({ header, message, duration = 1000, operationResult } : {header: string, message: string, duration: number, operationResult: ToastResultType}): Promise<HTMLIonToastElement> => {
+  public getToast = async ({ header, message, duration = 1000, operationResult }: { header: string, message: string, duration: number, operationResult: ToastResultType; })
+    : Promise<HTMLIonToastElement> => {
     if (this.toast && this.toast != undefined) {
-      return Promise.resolve(this.toast)
+      return Promise.resolve(this.toast);
     }
     const topToastr = await this.toastCtrl.getTop();
     if (topToastr && topToastr == this.toast) {
@@ -33,7 +34,7 @@ export class ToastrService {
     });
     await newToast.present();
     return newToast;
-  }
+  };
 
   public dismissToast = (toast: HTMLIonToastElement = null): Promise<boolean> => {
     if (toast) {
@@ -48,5 +49,5 @@ export class ToastrService {
       return Promise.resolve(false);
     }
 
-  }
+  };
 }

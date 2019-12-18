@@ -26,23 +26,25 @@ export class SignupPage implements OnInit {
   }
 
   signup(email: string, pass: string, username: string) {
-    this.authSvc.signUpNewUser({ email, pass, username }).subscribe(userCreds => {
-      if (!userCreds || typeof userCreds === 'undefined') {
-        throw new Error('No UserCredintials in Database...');
-      }
-      const { uid, email } = userCreds.user;
-      console.log(`User id ${uid} -- ( ${email} ) --  has been Created !...`);
-      // this.userSvc.setCurrentId(uid);
-      return this.router.navigateByUrl(`/chats`);
-    },
-      async err => {
+    this.authSvc.signUp({ email, pass, username }).subscribe(
+      (user: Partial<IUser>) => {
+        if (!user || typeof user === 'undefined') {
+          throw new Error('No UserCredintials in Database...');
+        }
+        const { id, email } = user;
+        console.log(`User id ${id} -- ( ${email} ) --  has been Created !...`);
+        // this.userSvc.setCurrentId(uid);
+        this.signupForm.reset({});
+        return this.router.navigateByUrl(`/chats`);
+      },
+      err => {
         this.signupForm.reset({
           'username': this.signupForm.get('username').value,
           'email': this.signupForm.get('email').value,
           'pass': ''
         });
         this.toastr.getToast({
-          header: 'Failed to SignUP',
+          header: 'Failed to SignUp',
           message: err.message || err,
           duration: 3000,
           operationResult: ToastResultType.FAIL
@@ -51,12 +53,7 @@ export class SignupPage implements OnInit {
   }
 
   togglePassword() {
-    if (this.passwordInputType == 'password') {
-      this.passwordInputType = 'text';
-    }
-    else {
-      this.passwordInputType = 'password';
-    }
+    this.passwordInputType = (this.passwordInputType === 'password') ? 'text' : 'password';
   }
 
 }

@@ -1,9 +1,9 @@
-import admin = require('firebase-admin');
+import { app, initializeApp, credential } from 'firebase-admin';
 
-export function register(): admin.app.App {
+export const register = (): app.App => {
   const serviceAccount = require('../fcm-key.json');
-  return admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+  return initializeApp({
+    credential: credential.cert(serviceAccount),
     databaseURL: `https://${serviceAccount.project_id}.firebaseio.com`
   });
 }

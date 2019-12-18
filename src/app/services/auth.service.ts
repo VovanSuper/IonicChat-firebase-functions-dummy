@@ -15,16 +15,18 @@ export class AuthService {
 
   constructor(private router: Router, private fDb: DbService, private fAuth: AngularFireAuth, private userSvc: UserService, private storeSvc: StorageService) { }
 
-  logInUser({ email, pass }: { email: string; pass: string; }) {
+  logIn({ email, pass }: { email: string; pass: string; } = { email: '', pass: '' }) {
+    if(!email.length || !pass.length) return throwError(`Email / Password should not be empty..!  `);
+
     return from(this.fAuth.auth.signInWithEmailAndPassword(email, pass)).pipe(
       concatMap((fbUserCreds: firebase.auth.UserCredential) => {
-        let { uid, email, ...rest } = fbUserCreds.user;
+        const { uid, email, ...rest } = fbUserCreds.user;
         return this.setDbUserLoggedinStatus({ uid, status: true }).pipe(
-          mapTo((fbUserCreds))
-        )
+          mapTo({ id: uid, email } as Partial<IUser>)
+        );
       }),
-      tap((user) => console.log(`User LogedIn :: ${JSON.stringify(user.user.email)}`)),
-      tap((user) => this.userSvc.setCurrentId(user.user.uid)),
+      // tap((user) => console.log(`User LogedIn :: ${JSON.stringify(user.email)}`)),
+      tap((user) => this.userSvc.setCurrentId(user.id)),
       catchError((err: firebase.auth.AuthError) => {
         console.error(`[FbSvc->logInUser()]::::::::   ${JSON.stringify(err.message)}`);
         return throwError(err);
@@ -32,24 +34,26 @@ export class AuthService {
     );
   }
 
-  signUpNewUser({ email, pass, username }: { email: string; pass: string; username?: string; }) {
+  signUp({ email, pass, username }: { email: string; pass: string; username?: string; } = { email: '', pass: '', username: '' }) {
+    if(!email.length || !pass.length || !username.length) return throwError(`Email / Password / Username should not be empty..!  `);
+
     return from(this.fAuth.auth.createUserWithEmailAndPassword(email, pass)).pipe(
       concatMap(fbUserCreds => {
         let { uid, email, ...rest } = fbUserCreds.user;
         return this.userSvc.upsertDbUser({ id: uid, name: username, email }).pipe(
           concatMap(_user => {
             return this.setDbUserLoggedinStatus({ uid, status: true }).pipe(
-              mapTo(fbUserCreds)
-            )
+              mapTo({ id: uid, email } as Partial<IUser>)
+            );
           })
         );
       }),
-      tap((user) => this.userSvc.setCurrentId(user.user.uid)),
+      tap((user) => this.userSvc.setCurrentId(user.id)),
       catchError((err: firebase.auth.AuthError) => {
         console.error(`[FbSvc->signInUser()]::::::::   ${JSON.stringify(err.message)}`);
         return throwError(err);
       })
-    )
+    );
   }
 
   logOut() {
@@ -62,7 +66,7 @@ export class AuthService {
         this.userSvc.unsetCurrUserId();
         return this.setDbUserLoggedinStatus({ uid: currUserId, status: false }).pipe(
           mapTo(this.router.navigateByUrl('/auth/login'))
-        )
+        );
       })
     );
   }

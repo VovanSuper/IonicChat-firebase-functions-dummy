@@ -16,7 +16,7 @@ export class ChatService {
   constructor(private db: DbService, private userSvc: UserService) {
     this.partner$ = this._partnerId$$.pipe(
       map(usr => usr as IUser)
-    )
+    );
   }
 
   setCurrnetPartnerById(partnerID: string) {
@@ -26,7 +26,7 @@ export class ChatService {
     return this.userSvc.getDbUserById(partnerID).pipe(
       concatMap(partner => {
         this._partnerId$$.next(partner);
-        return of(partner)
+        return of(partner);
       }),
       catchError(err => {
         this._partnerId$$.error(err);
@@ -54,11 +54,11 @@ export class ChatService {
                 'to_': currPartnerID
               }, (err) => {
                 if (err) {
-                  console.log(err)
+                  console.log(err);
                 } else {
-                  console.log('Successfully updated new msg record')
+                  console.log('Successfully updated new msg record');
                 }
-              })
+              });
             })
           ),
           this.db.push(`chats/${currPartnerID}`, { messageKey: key }).pipe(
@@ -68,11 +68,11 @@ export class ChatService {
                 'to_': currPartnerID
               }, (err) => {
                 if (err) {
-                  console.log(err)
+                  console.log(err);
                 } else {
-                  console.log('Successfully updated new msg record')
+                  console.log('Successfully updated new msg record');
                 }
-              })
+              });
             })
           )
         );
@@ -88,7 +88,7 @@ export class ChatService {
     );
   }
 
-  getUserMessagesWithPartner({ userId, partnerId }: { userId: string; partnerId: string; }) {
+  getUserMessagesWithPartner({ userId, partnerId }: { userId: string; partnerId: string; }): Observable<Array<IChatMsg & { isSelfMsg: boolean; }>> {
     if (!userId || !partnerId) throw new Error('Both currnent user id and his Partner id should be provided ..! ');
 
     return new Observable(inner => {
@@ -149,7 +149,7 @@ export class ChatService {
         inner.error(err);
       },
         () => inner.complete());
-    })
+    });
   }
 
 
@@ -170,7 +170,7 @@ export class ChatService {
           inner.next(val);
         },
         err => {
-          inner.error(err)
+          inner.error(err);
         },
         () => inner.complete()
       );
@@ -185,16 +185,16 @@ const filterChatsForParticipant = (chats: IChatMsg[], partnerId: string): IChatM
     throw new Error('Participant ID should be provided ... got empty ..!');
   }
   return chats.filter(chat => (chat.from === partnerId || chat.to === partnerId));
-}
+};
 
-const setAreChatsOwned = (chats: IChatMsg[], partnerID: string): Array<IChatMsg & { isSelfMsg: boolean }> => {
+const setAreChatsOwned = (chats: IChatMsg[], partnerID: string): Array<IChatMsg & { isSelfMsg: boolean; }> => {
   return chats.map(chat => setIsMsgUserOwned(chat, partnerID));
-}
+};
 
-const setIsMsgUserOwned = (chat: IChatMsg, partnerId: string): IChatMsg & { isSelfMsg: boolean } => {
+const setIsMsgUserOwned = (chat: IChatMsg, partnerId: string): IChatMsg & { isSelfMsg: boolean; } => {
   return { ...chat, isSelfMsg: (chat.from !== partnerId && chat.to === partnerId) };
-}
+};
 
 export type MessageType = {
-  messageKey: string
-}
+  messageKey: string;
+};

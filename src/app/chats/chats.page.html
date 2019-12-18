@@ -1,7 +1,7 @@
 <ng-container *ngIf="vm$ | async as vm; else noData">
   <ion-header>
     <ion-toolbar *ngIf="vm.currUser as user">
-      <ion-title *ngIf="user.name" slot="end">Hi, {{user.name}}</ion-title>
+      <ion-title *ngIf="user.name" slot="end">{{vm.title}}</ion-title>
       <ion-buttons>
         <ion-button class="large" (click)="logout()">Logout</ion-button>
       </ion-buttons>

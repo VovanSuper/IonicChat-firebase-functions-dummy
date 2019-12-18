@@ -1,10 +1,9 @@
-import * as admin from 'firebase-admin';
 import { getAllUserNamesTokens } from './helpers/database';
 import { sendTestToAllTokens, sendToTopic, assignTokensToTopic, createPushMsg } from './helpers/messaging';
 import { register } from './helpers/register';
 
 
-let app = register();
+const app = register();
 
 getAllUserNamesTokens(app).then(userNameTokensMap => {
 
@@ -22,12 +21,16 @@ getAllUserNamesTokens(app).then(userNameTokensMap => {
   console.log('Tokens :: ');
   for (let i in userNameTokensMap) {
     if (userNameTokensMap[i])
-      tokens.push(...userNameTokensMap[i])
+      tokens.push(...userNameTokensMap[i]);
   }
 
   console.log(tokens);
 
-  sendTestToAllTokens({ app, tokens }).then(_ => process.exit(0));
+  sendTestToAllTokens({ app, tokens })
+    .then(val => {
+      val.errors
+      process.exit(0);
+    });
   // assignTokensToTopic(app, allTokens, testTopic)
   //   .then(assignResult => {
   //     if (assignResult.errors) {
