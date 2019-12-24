@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { QueryFn } from '@angular/fire/database';
-import { tap, mergeMap, catchError, map, distinctUntilChanged, concatMap, filter } from 'rxjs/operators';
+import { tap, mergeMap, catchError, map, distinctUntilChanged, concatMap, filter, shareReplay } from 'rxjs/operators';
 import { BehaviorSubject, throwError, iif, of, Observable, ReplaySubject, Subject } from 'rxjs';
 
 import { DbService } from './db.service';
@@ -12,20 +12,23 @@ import { IUser } from 'src/app/models/IUser';
 })
 export class UserService {
   private _currentUser$$: BehaviorSubject<Partial<IUser> | null>;
-  // public allUsers$$: ReplaySubject<IUser[] | Array<Partial<IUser>>> = new ReplaySubject(0);
 
   constructor(private fDb: DbService, private storeSvc: StorageService) {
     this._currentUser$$ = new BehaviorSubject({ id: this.storeSvc.get('user') });
   }
 
-  getAllUsersExptSelf({ query, postQueryFn }: { query?: QueryFn, postQueryFn?: (val: Partial<IUser>) => boolean } = { query: null, postQueryFn: (val) => true }) {
+  getAllUsersExptSelf({ query, postQueryFn }: { query?: QueryFn, postQueryFn?: (val: Partial<IUser>) => boolean; } = { query: null, postQueryFn: (val) => true }) {
     return new Observable<Array<IUser>>(inner => {
       // this.fDb.list(`users/`, query).pipe(
       const usersPath = 'users/';
       this.fDb.list(usersPath, query).pipe(
-        // distinctUntilChanged(),
+        filter(users => !!users),
         map(users => users as Array<IUser>),
         map(users => users.filter(postQueryFn) as Array<IUser>),
+        catchError(err => {
+          console.error(`UserSvc->getAllUsersExptSelf() :: ${JSON.stringify(err)}`);
+          return throwError(err);
+        })
         // shareReplay({ bufferSize: 100, refCount: true })
       ).subscribe(
         val => {
@@ -45,19 +48,28 @@ export class UserService {
 
   unsetCurrUserId(id: string = null) {
     this.delUser();
-    this._currentUser$$.next(null);
+    this._currentUser$$.next({ id: null });
   }
 
   getCurrentUserInfo(): Observable<IUser | null> {
-    return this._currentUser$$.asObservable().pipe(
-      filter(usr => (!!usr && !!usr.id)),
-      distinctUntilChanged(),
-      concatMap(({ id }) => iif(() => (!!id), this.getDbUserById((!!id) ? id : null), of(null))),
+    return this.CurrentUser.pipe(
+      filter(({ id = null }: Partial<IUser> = { id: null }) => !!id),
+      concatMap(({ id = null }: Partial<IUser> = { id: null }) => iif(() => (!!id), this.getDbUserById((!!id) ? id : null), of(null))),
       tap(user => console.log(`[UserSvc->getCurrentUserInfo()] :::::::::     ${JSON.stringify(user)}`)),
+      shareReplay({ bufferSize: 1, refCount: false }),
       catchError(err => {
         console.warn(`[UserSvc->getCurrentUserInfo()]:::: ${JSON.stringify(err)}`);
         return throwError(err);
       })
+    );
+  }
+
+  get CurrentUser(): Observable<Partial<IUser> | null> {
+    return this._currentUser$$.asObservable().pipe(
+      map(({ id = null, ...rest }: Partial<IUser> = { id: null }) => {
+        return { id };
+      }),
+      distinctUntilChanged()
     );
   }
 
@@ -66,7 +78,9 @@ export class UserService {
   }
 
   getDbUserById(uId: string): Observable<IUser> {
-    return this.fDb.get(`users/${uId}`).pipe(
+    if (!!!uId) throw new Error('Please provide uID ..!');
+
+    return this.fDb.get<IUser | Partial<IUser>>(`users/${uId}`).pipe(
       map(user => user as IUser),
       tap(data => console.log(`[UserSvc->getDbUserById()]:::: User obj ::::   ${JSON.stringify(data)}`))
     );

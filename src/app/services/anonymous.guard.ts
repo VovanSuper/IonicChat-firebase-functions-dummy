@@ -13,13 +13,13 @@ export class AnonymousGuard implements CanActivate {
   constructor(private userSvc: UserService, private router: Router) { }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    return this.userSvc.getCurrentUserInfo().pipe(
-      map(currUser => {
-        if (currUser && currUser.id) {
+    return this.userSvc.CurrentUser.pipe(
+      map(({ id }) => {
+        if (id) {
           this.router.navigateByUrl('/chats');
           return false;
         }
-        return !!!currUser;
+        return !!!id;
       })
     );
   }
