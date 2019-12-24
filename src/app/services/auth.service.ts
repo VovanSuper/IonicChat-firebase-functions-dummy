@@ -14,10 +14,16 @@ import { IUser } from 'src/app/models/IUser';
 })
 export class AuthService {
 
-  constructor(private router: Router, private fDb: DbService, private fAuth: AngularFireAuth, private userSvc: UserService, private storeSvc: StorageService) { }
+  constructor(
+    private router: Router,
+    private fDb: DbService,
+    private fAuth: AngularFireAuth,
+    private userSvc: UserService,
+    private storeSvc: StorageService
+  ) { }
 
-  logIn({ email, pass }: { email: string; pass: string; } = { email: '', pass: '' }) {
-    if (!email.length || !pass.length) return throwError(`Email / Password should not be empty..!  `);
+  logIn({ email, pass }: { email?: string; pass?: string; } = { email: '', pass: '' }) {
+    if (!email.trim().length || !pass.trim().length) return throwError(`Email / Password should not be empty..!  `);
 
     return from(this.fAuth.auth.signInWithEmailAndPassword(email, pass)).pipe(
       concatMap((fbUserCreds: firebase.auth.UserCredential) => {
@@ -36,7 +42,7 @@ export class AuthService {
   }
 
   signUp({ email, pass, username }: { email: string; pass: string; username?: string; } = { email: '', pass: '', username: '' }) {
-    if (!email.length || !pass.length || !username.length) return throwError(`Email / Password / Username should not be empty..!  `);
+    if (!email.trim().length || !pass.trim().length || !username.trim().length) return throwError(`Email / Password / Username should not be empty..!  `);
 
     return from(this.fAuth.auth.createUserWithEmailAndPassword(email, pass)).pipe(
       concatMap(fbUserCreds => {
@@ -74,6 +80,8 @@ export class AuthService {
   }
 
   private setDbUserLoggedinStatus({ uid, status = true }: { uid: string; status?: boolean; }) {
+    if (!uid) throw new Error('UserId cannot be null or empty');
+
     return this.fDb.set(`users/${uid}/isLoggedIn`, status).pipe(take(1));
   }
 
