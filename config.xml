@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget android-versionCode="15" id="com.vovansuper.tester.beta" ios-CFBundleVersion="15" version="0.1.5" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:tools="http://schemas.android.com/tools">
     <name short="Firebase Chat Dummy">Firebase Chat App with Push Notifications</name>
-    <description>Chat to registered Users, invite new Users to chat</description>
+    <description>Chat to registered Users, invite new Users</description>
     <author email="ovsyukov@yandex.com" href="https://ovsyukov.pro/projects/">HOMEApp</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://localhost:8100" />
     <access origin="*" />
     <allow-intent href="https://app/*" />
     <allow-intent href="httpsionic://app/*" />
@@ -126,7 +126,7 @@
     <plugin name="cordova-plugin-splashscreen" spec="5.0.2" />
     <plugin name="cordova-plugin-ionic-webview" spec="^4.0.0" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
-        <plugin name="cordova-plugin-camera" spec="^4.1.0">
+    <plugin name="cordova-plugin-camera" spec="^4.1.0">
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="need photo library access to get profile pictures" />
         <variable name="CAMERA_USAGE_DESCRIPTION" value="need camera access to take profile pictures" />
     </plugin>

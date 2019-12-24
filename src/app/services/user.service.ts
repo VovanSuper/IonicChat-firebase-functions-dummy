@@ -50,8 +50,8 @@ export class UserService {
 
   getCurrentUserInfo(): Observable<IUser | null> {
     return this._currentUser$$.asObservable().pipe(
-      // filter(usr => (!!usr && !!usr.id)),
-      // distinctUntilChanged(),
+      filter(usr => (!!usr && !!usr.id)),
+      distinctUntilChanged(),
       concatMap(({ id }) => iif(() => (!!id), this.getDbUserById((!!id) ? id : null), of(null))),
       tap(user => console.log(`[UserSvc->getCurrentUserInfo()] :::::::::     ${JSON.stringify(user)}`)),
       catchError(err => {

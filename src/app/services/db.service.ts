@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { from, throwError, of, Observable } from 'rxjs';
-import { catchError, shareReplay, map, concatMap } from 'rxjs/operators';
-import { AngularFireDatabase, QueryFn, ChildEvent } from '@angular/fire/database';
+import { from, throwError, of, Observable, Subscriber } from 'rxjs';
+import { catchError, shareReplay, map, concatMap, tap, take } from 'rxjs/operators';
+import { AngularFireDatabase, QueryFn, ChildEvent, SnapshotAction } from '@angular/fire/database';
 import { AngularFireMessaging } from "@angular/fire/messaging";
+import { DataSnapshot } from '@angular/fire/database/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -11,17 +12,18 @@ export class DbService {
 
   constructor(private fDb: AngularFireDatabase, private fMsg: AngularFireMessaging) { }
 
-  listSnapshots({ path, query = null, snaps }: { path: string; query?: QueryFn; snaps: string[]; } = { path: 'chats/', query: null, snaps: ['child_added'] }) {
-    return new Observable(inner => {
-      let events: Array<ChildEvent> = snaps as Array<ChildEvent>;
+  listSnapshots<T>({ path, query, snapEvents }: { path: string; query?: QueryFn; snapEvents?: string[]; } = { path: '', query: null, snapEvents: ['child_added'] }): Observable<T[]> {
+    return new Observable((inner: Subscriber<T[]>) => {
+      const events: Array<ChildEvent> = snapEvents as Array<ChildEvent>;
       this.fDb.list(path, query).snapshotChanges(events).pipe(
         // shareReplay({ bufferSize: 1, refCount: true, windowTime: 300 }),
-        concatMap((vals) => {
-          let chats = vals.map(val => val.payload.val());
+        concatMap((vals: Array<SnapshotAction<T>>) => {
+          let chats = vals.map(val => val.payload.exists() && val.payload.val() as T);
           return of(chats);
         }),
+        tap(vals => console.log(`[dbSvc->listSnapshots()] :: new snapshot ${JSON.stringify(vals)}`)),
         catchError((err) => {
-          console.error(`[DbService->list()]::::::::   ${JSON.stringify(err)}`);
+          console.error(`[DbService->listSnapshots()] ::::::::   ${JSON.stringify(err)}`);
           return throwError(err);
         })
       ).subscribe(
@@ -33,9 +35,9 @@ export class DbService {
   }
 
 
-  list(path: string, query: QueryFn = null) {
+  list<T>(path: string, query: QueryFn = null) {
     // return new Observable(inner => {
-    return this.fDb.list(path, query).valueChanges().pipe(
+    return this.fDb.list<T>(path, query).valueChanges().pipe(
       // shareReplay({ bufferSize: 1, refCount: true, windowTime: 300 }),
       map(vals => {
         console.log(`VALS ::::::::::::: ${JSON.stringify(vals)}`);
@@ -75,6 +77,10 @@ export class DbService {
         return throwError(err);
       })
     );
+  }
+
+  getSnapshot<T>(path = 'chats/messages'): Promise<T> {
+    return (this.fDb.database.ref(path).once('value')).then((item: DataSnapshot) => item.exists() && item.toJSON() as T);
   }
 
 

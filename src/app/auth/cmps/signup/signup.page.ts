@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from 'src/app/services/user.service';
 import { ToastrService, ToastResultType } from 'src/app/services/toastr.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { IUser } from 'src/app/models/IUser';
 
 @Component({
   selector: 'app-signup',
@@ -22,7 +23,7 @@ export class SignupPage implements OnInit {
       'username': ['', [Validators.required, Validators.minLength(1)]],
       'email': ['', [Validators.required, Validators.email]],
       'pass': ['', [Validators.required, Validators.minLength(4)]]
-    })
+    });
   }
 
   signup(email: string, pass: string, username: string) {
@@ -48,7 +49,7 @@ export class SignupPage implements OnInit {
           message: err.message || err,
           duration: 3000,
           operationResult: ToastResultType.FAIL
-        })
+        });
       });
   }
 

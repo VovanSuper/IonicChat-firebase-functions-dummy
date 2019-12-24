@@ -21,7 +21,7 @@
     "rtdb"
   ],
   "devDependencies": {
-    "firebase-admin": "^8.8.0",
+    "firebase-admin": "^8.9.0",
     "firebase-tools": "^7.11.0",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.3",

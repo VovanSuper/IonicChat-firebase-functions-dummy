@@ -4,7 +4,7 @@
       <ion-buttons slot="start">
         <ion-back-button slot="start" defaultHref="/chats"></ion-back-button>
       </ion-buttons>
-      <ion-title slot="end" *ngIf="vm.currentPartner as currentPartner">{{vm.title}}</ion-title>
+      <ion-title slot="end" *ngIf="vm.currentPartner">{{vm.title}}</ion-title>
     </ion-toolbar>
   </ion-header>
 
@@ -39,22 +39,40 @@
       <p>Write him right now!</p>
     </ng-template>
   </ion-content>
+
+  <ion-footer>
+    <div class="new-msg-block">
+      <div class="msg-area">
+        <ion-textarea #messageBox [(ngModel)]="newMessage" autofocus="true" (keyup.control.enter)="send(newMessage)" placeholder="Enter your message..."> </ion-textarea>
+      </div>
+      <ion-fab-button class="msg-btn" color="default" (click)="send(vm.currentUser.id, vm.currentPartner.id, newMessage)" [disabled]="!messageBox.value || !messageBox.value.trim().length">
+        <ion-icon size="large" name="arrow-dropright"></ion-icon>
+      </ion-fab-button>
+    </div>
+  </ion-footer>
 </ng-container>
 
 <ng-template #noData>
-  <h3>No Data..!</h3>
+  <ion-header>
+    <ion-toolbar color="primary">
+      <ion-buttons slot="start">
+        <ion-back-button slot="start" defaultHref="/chats"></ion-back-button>
+      </ion-buttons>
+      <ion-title slot="end">
+        <ion-buttons slot="end">
+          <ion-button (click)="logOut()">Log out</ion-button>
+        </ion-buttons>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-6 col-offset-3>
+          <h3>No Data..!</h3>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-content>
 </ng-template>
-
-<ion-footer>
-  <div class="new-msg-block">
-
-    <div class="msg-area">
-      <ion-textarea #messageBox [(ngModel)]="newMessage" autofocus="true" (keyup.control.enter)="send(newMessage)"
-        placeholder="Enter your message..."> </ion-textarea>
-    </div>
-    <ion-fab-button class="msg-btn" color="default" (click)="send(newMessage)"
-      [disabled]="!messageBox.value || !messageBox.value.trim().length">
-      <ion-icon size="large" name="arrow-dropright"></ion-icon>
-    </ion-fab-button>
-  </div>
-</ion-footer>
