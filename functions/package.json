@@ -1,6 +1,7 @@
 {
   "name": "firebase-functions-push-test",
   "version": "0.1.5",
+  "private": true,
   "license": "GNU LGPLv3",
   "description": "Test push notifications using firebase admin sdk and functions sdk with firebase FCM and node.js",
   "author": {
@@ -17,7 +18,7 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": ">=10.14.1",
+    "node": "10",
     "npm": ">=6.10.2"
   },
   "main": "lib/index.js",
@@ -27,9 +28,8 @@
   },
   "devDependencies": {
     "tslint": "^5.20.1",
-    "typescript": "^3.7.3",
+    "typescript": "^3.7.4",
     "firebase-functions-test": "^0.1.7",
     "ts-node": "^8.5.4"
-  },
-  "private": true
+  }
 }

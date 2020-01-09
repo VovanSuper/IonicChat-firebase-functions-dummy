@@ -3,7 +3,7 @@
     <name short="Firebase Chat Dummy">Firebase Chat App with Push Notifications</name>
     <description>Chat to registered Users, invite new Users</description>
     <author email="ovsyukov@yandex.com" href="https://ovsyukov.pro/projects/">HOMEApp</author>
-    <content src="index.html" />
+    <content original-src="index.html" src="http://localhost:8100" />
     <access origin="*" />
     <allow-intent href="https://app/*" />
     <allow-intent href="httpsionic://app/*" />
@@ -13,6 +13,7 @@
     <allow-intent href="geo:*" />
     <allow-navigation href="https://*" />
     <allow-navigation href="httpsionic://*" />
+    <preference name="AndroidLaunchMode" value="singleTask" />
     <preference name="android-minSdkVersion" value="23" />
     <preference name="android-targetSdkVersion" value="28" />
     <preference name="ScrollEnabled" value="false" />
@@ -136,8 +137,8 @@
         <variable name="FIREBASE_PERFORMANCE_COLLECTION_ENABLED" value="true" />
         <variable name="FIREBASE_CRASHLYTICS_COLLECTION_ENABLED" value="true" />
     </plugin>
-    <plugin name="cordova-plugin-firebase-authentication" spec="^3.0.0">
-        <variable name="FIREBASE_AUTH_VERSION" value="18+" />
+    <plugin name="cordova-plugin-firebase-authentication" spec="^3.0.1">
+        <variable name="FIREBASE_AUTH_VERSION" value="19.2.+" />
     </plugin>
     <allow-navigation href="http://localhost:8100" sessionid="4fac6869" />
 </widget>

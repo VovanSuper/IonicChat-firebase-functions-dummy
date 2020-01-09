@@ -9,8 +9,8 @@
   </ion-header>
 
   <ion-content>
+    <div class="alert alert-danger" *ngIf="error$ | async as error">{{error}}</div>
     <ng-container *ngIf="vm.messages as messages; else noMsg">
-      <!-- <ng-container *ngIf="messages && messages.length; else noMsg"> -->
       <ion-content #contentScroll>
         <ion-grid>
           <ion-row *ngFor="let chat of messages">
@@ -31,7 +31,6 @@
           </ion-row>
         </ion-grid>
       </ion-content>
-      <!-- </ng-container> -->
     </ng-container>
 
     <ng-template #noMsg>

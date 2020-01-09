@@ -4,7 +4,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { IUser } from 'src/app/models/IUser';
 import { QueryFn } from '@angular/fire/database';
 import { Router } from '@angular/router';
-import { Observable, throwError, combineLatest } from 'rxjs';
+import { Observable, throwError, combineLatest, Subject, of } from 'rxjs';
 import { concatMap, map, catchError, tap, filter } from 'rxjs/operators';
 import { untilDestroyed } from 'ngx-take-until-destroy';
 
@@ -17,6 +17,8 @@ export class ChatsPage implements OnInit, OnDestroy {
   private currUser$: Observable<IUser>;
   private chats$: Observable<IUser[]>;
   private title$: Observable<string>;
+
+  public error$ = new Subject<string>();
   public vm$: Observable<{ currUser: IUser, chats: IUser[]; title: string; }>;
 
   constructor(private router: Router, private userSvc: UserService, private authSvc: AuthService) { }
@@ -26,7 +28,7 @@ export class ChatsPage implements OnInit, OnDestroy {
   ionViewWillEnter() {
     this.currUser$ = this.userSvc.getCurrentUserInfo().pipe(
       untilDestroyed(this),
-      tap(usr => console.log(`[ChatsPage->ionViewWillEnter()]:: curr user ${JSON.stringify(usr)}`))
+      // tap(usr => console.log(`[ChatsPage->ionViewWillEnter()]:: curr user ${JSON.stringify(usr)}`))
     );
     this.chats$ = this.currUser$.pipe(
       untilDestroyed(this),
@@ -36,7 +38,8 @@ export class ChatsPage implements OnInit, OnDestroy {
       map((users = []) => [...users] as Array<IUser>),
       catchError(err => {
         console.warn(err);
-        return throwError(err);
+        this.error$.next(err);
+        return of(null);
       })
     );
     this.title$ = this.currUser$.pipe(
@@ -50,6 +53,7 @@ export class ChatsPage implements OnInit, OnDestroy {
       this.chats$,
       this.title$
     ).pipe(
+      filter(currUser => !!currUser),
       map(([currUser, chats, title]) => {
         return { currUser, chats, title };
       })

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Params } from '@angular/router';
-import { concatMap, map, take, filter, switchMap, combineLatest as combineLatestWith } from 'rxjs/operators';
-import { of, Observable, combineLatest } from 'rxjs';
+import { concatMap, map, take, filter, switchMap, combineLatest as combineLatestWith, catchError } from 'rxjs/operators';
+import { of, Observable, combineLatest, Subject } from 'rxjs';
 
 import { UserService } from 'src/app/services/user.service';
 import { IUser } from 'src/app/models/IUser';
@@ -20,14 +20,15 @@ import { AuthService } from 'src/app/services/auth.service';
 export class ChatPage implements AfterViewInit, OnDestroy {
   @ViewChild('contentScroll', { static: false }) contentScroll: IonContent;
   newMessage = '';
-  messages$: Observable<IChatMsg[]> = null;
-  user$: Observable<IUser> = null;
-  partner$: Observable<IUser> = null;
-  title$: Observable<string> = of('No chat..!');
-  
-  vm$: Observable<{ currentUser: IUser, currentPartner: IUser; messages: Array<IChatMsg>; title: string; }> = null;
   userAvatarData = userAva;
   partnerAvatarData = partnerAva;
+  private messages$: Observable<IChatMsg[]> = null;
+  private user$: Observable<IUser> = null;
+  private partner$: Observable<IUser> = null;
+  private title$: Observable<string> = of('No chat..!');
+  
+  public error$ = new Subject<string>();
+  public vm$: Observable<{ currentUser: IUser, currentPartner: IUser; messages: Array<IChatMsg>; title: string; }> = null;
 
   constructor(private accRoute: ActivatedRoute, private userSvc: UserService, private chatSvc: ChatService, private authSvc: AuthService) { }
 
@@ -44,7 +45,13 @@ export class ChatPage implements AfterViewInit, OnDestroy {
         return this.userSvc.getDbUserById(id);
       })
     );
-    this.messages$ = this.getMessagesForCurrPartner();
+    this.messages$ = this.getMessagesForCurrPartner().pipe(
+      catchError(err => {
+        console.warn(`ChatPage->Messages::: ${JSON.stringify(err)}`);
+        this.error$.next(err);
+        return of(null);
+      })
+    );
     this.title$ = this.partner$.pipe(
       filter(partner => !!partner),
       map(partner => `Chat to ${partner.name}`)
@@ -56,6 +63,7 @@ export class ChatPage implements AfterViewInit, OnDestroy {
       this.messages$,
       this.title$
     ).pipe(
+      filter(user => !!user),
       map(([currentUser, currentPartner, messages, title]) => {
         return { currentUser, currentPartner, messages, title };
       })
@@ -85,9 +93,7 @@ export class ChatPage implements AfterViewInit, OnDestroy {
       filter(user => !!user),
       combineLatestWith(this.partner$),
       concatMap(([user, partner]) => this.chatSvc.getUserMessagesWithPartner({ userId: user.id, partnerId: partner.id })),
-      map((chats = []) => {
-        return chats as IChatMsg[];
-      })
+      map((chats = []) => chats as IChatMsg[] | [])
     );
   }
 

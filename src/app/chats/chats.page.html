@@ -9,6 +9,7 @@
   </ion-header>
 
   <ion-content>
+    <div class="alert alert-danger" *ngIf="error$ | async as error">{{error}}</div>
     <ng-container *ngIf="vm.chats as chats">
       <!-- <ion-virtual-scroll [items]="chats" approxItemHeight="200px"> -->
       <!-- <ion-card *virtualItem="let item;" (click)="gotoChat(item.id)"> -->
