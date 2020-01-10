@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
-import { DbService } from 'src/app/services/db.service';
-import { ToastrService, ToastResultType } from 'src/app/services/toastr.service';
-import { AuthService } from 'src/app/services/auth.service';
-import { IUser } from 'src/app/models/IUser';
+import { DbService } from '@services/db.service';
+import { ToastrService, ToastResultType } from '@services/toastr.service';
+import { AuthService } from '@services/auth.service';
+import { IUser } from '@models/index';
+
 
 @Component({
   selector: 'app-login',

@@ -1,12 +1,13 @@
 import { Component, OnDestroy } from '@angular/core';
-
 import { Platform } from '@ionic/angular';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { PushService } from 'src/app/services/push.service';
-import { ToastrService, ToastResultType } from 'src/app/services/toastr.service';
-import { untilDestroyed } from 'ngx-take-until-destroy';
-import { BackbtnService } from './services/backbtn.service';
+
+import { PushService } from '@services/push.service';
+import { ToastrService, ToastResultType } from '@services/toastr.service';
+import { BackbtnService } from '@services/backbtn.service';
+
 
 @Component({
   selector: 'app-root',

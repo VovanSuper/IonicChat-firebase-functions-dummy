@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { UserService } from 'src/app/services/user.service';
-import { AuthService } from 'src/app/services/auth.service';
-import { IUser } from 'src/app/models/IUser';
-import { QueryFn } from '@angular/fire/database';
+import { Observable, Subject, of, combineLatest } from 'rxjs';
 import { Router } from '@angular/router';
-import { Observable, throwError, combineLatest, Subject, of } from 'rxjs';
-import { concatMap, map, catchError, tap, filter } from 'rxjs/operators';
 import { untilDestroyed } from 'ngx-take-until-destroy';
+import { concatMap, catchError, filter, map } from 'rxjs/operators';
+
+import { UserService } from '@services/user.service';
+import { AuthService } from '@services/auth.service';
+import { IUser } from '@models/index';
 
 @Component({
   selector: 'app-chats',

@@ -9,7 +9,7 @@ import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ProvidersModule } from './providers.module';
-import { environment } from 'src/environments/environment';
+import { environment } from '@env/environment';
 
 @NgModule({
   declarations: [

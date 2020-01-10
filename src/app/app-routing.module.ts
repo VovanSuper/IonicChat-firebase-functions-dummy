@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { IsAuthGuard } from './services/isauth.guard';
-import { AnonymousGuard } from 'src/app/services/anonymous.guard';
+
+import { AnonymousGuard } from '@services/anonymous.guard';
+import { IsAuthGuard } from '@services/isauth.guard';
 
 const routes: Routes = [
   { path: 'auth', canActivate: [AnonymousGuard], loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule) },

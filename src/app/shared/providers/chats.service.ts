@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { DbService } from 'src/app/services/db.service';
-import { mergeMap, catchError, map, concatMap, tap, filter } from 'rxjs/operators';
-import { of, throwError, combineLatest, Observable, BehaviorSubject, from } from 'rxjs';
-import { IChatMsg } from 'src/app/models/IChatMsg';
-import { IUser } from 'src/app/models/IUser';
-import { UserService } from 'src/app/services/user.service';
+import { BehaviorSubject, Observable, of, throwError, combineLatest, from } from 'rxjs';
+import { concatMap, catchError, map } from 'rxjs/operators';
+
+import { DbService } from './db.service';
+import { UserService } from './user.service';
+import { IChatMsg, IUser } from '@models/index';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,7 @@ export class ChatService {
       throw new Error('Partners\' should be string');
 
     return this.userSvc.getDbUserById(partnerID).pipe(
-      concatMap(partner => {
+      concatMap((partner: IUser) => {
         this._partnerId$$.next(partner);
         return of(partner);
       }),

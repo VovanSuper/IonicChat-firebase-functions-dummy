@@ -5,9 +5,10 @@ import { BehaviorSubject, throwError, iif, of, Observable, Subject } from 'rxjs'
 import { QueryFn } from '@angular/fire/database';
 
 import { DbService } from './db.service';
-import { StorageService } from 'src/app/services/storage.service';
-import { IUser } from 'src/app/models/IUser';
+import { StorageService } from './storage.service';
 import { UtilsService } from './utils.service';
+import { IUser } from '@models/index';
+
 
 @Injectable({
   providedIn: 'root'

@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { DbService } from 'src/app/services/db.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UserService } from 'src/app/services/user.service';
-import { ToastrService, ToastResultType } from 'src/app/services/toastr.service';
-import { AuthService } from 'src/app/services/auth.service';
-import { IUser } from 'src/app/models/IUser';
+
+import { AuthService } from '@services/auth.service';
+import { IUser } from '@models/index';
+import { ToastrService, ToastResultType } from '@services/toastr.service';
 
 @Component({
   selector: 'app-signup',

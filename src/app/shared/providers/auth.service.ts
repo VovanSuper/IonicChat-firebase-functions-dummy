@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { from, throwError, of } from 'rxjs';
 import { catchError, concatMap, tap, map, mapTo, mergeMap, take, mergeAll } from 'rxjs/operators';
 import { AngularFireAuth } from '@angular/fire/auth';
@@ -7,8 +8,7 @@ import { auth } from 'firebase/app';
 import { DbService } from './db.service';
 import { UserService } from './user.service';
 import { StorageService } from './storage.service';
-import { Router } from '@angular/router';
-import { IUser } from 'src/app/models/IUser';
+import { IUser } from '@models/index';
 
 @Injectable({
   providedIn: 'root'

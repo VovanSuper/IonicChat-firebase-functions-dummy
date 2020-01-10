@@ -1,17 +1,13 @@
 import { Injectable } from '@angular/core';
-import { FirebaseX } from "@ionic-native/firebase-x/ngx";
-import { DbService } from 'src/app/services/db.service';
-import { UserService } from 'src/app/services/user.service';
-import { Observable, from, throwError, of } from 'rxjs';
-import { IUser } from 'src/app/models/IUser';
+import { AngularFireDatabase } from '@angular/fire/database';
+import { of, throwError, Observable, from } from 'rxjs';
 import { concatMap, catchError, map, shareReplay, take, tap } from 'rxjs/operators';
-import { AngularFireDatabase, QueryFn } from '@angular/fire/database';
+import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 
-export interface IPushMsg {
-  title?: string;
-  body?: string;
-  data?: { [key: string]: string; };
-}
+import { DbService } from './db.service';
+import { UserService } from './user.service';
+import { IPushMsg, IUser } from '@models/index';
+
 
 @Injectable({
   providedIn: 'root'

@@ -36,10 +36,10 @@
                 "input": "src/theme/variables.scss"
               },
               {
-                "input": "src/global.scss"
+                "input": "src/styles/global.scss"
               },
               {
-                "input": "src/base.scss"
+                "input": "src/styles/base.scss"
               }
             ],
             "scripts": []

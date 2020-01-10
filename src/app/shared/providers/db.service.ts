@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { from, throwError, of, Observable, Subscriber } from 'rxjs';
-import { catchError, shareReplay, map, concatMap, tap, take } from 'rxjs/operators';
+import { catchError, map, concatMap, tap, take } from 'rxjs/operators';
 import { AngularFireDatabase, QueryFn, ChildEvent, SnapshotAction } from '@angular/fire/database';
-import { DataSnapshot } from '@angular/fire/database/interfaces';
 
 @Injectable({
   providedIn: 'root'

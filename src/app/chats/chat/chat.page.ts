@@ -1,16 +1,15 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Params } from '@angular/router';
+import { IonContent } from '@ionic/angular';
 import { concatMap, map, take, filter, switchMap, combineLatest as combineLatestWith, catchError } from 'rxjs/operators';
 import { of, Observable, combineLatest, Subject } from 'rxjs';
-
-import { UserService } from 'src/app/services/user.service';
-import { IUser } from 'src/app/models/IUser';
-import { ChatService } from 'src/app/services/chats.service';
-import { IChatMsg } from 'src/app/models/IChatMsg';
-import { IonContent } from '@ionic/angular';
-import { userAva, partnerAva } from './avatar';
 import { untilDestroyed } from 'ngx-take-until-destroy';
-import { AuthService } from 'src/app/services/auth.service';
+
+import { UserService } from '@services/user.service';
+import { ChatService } from '@services/chats.service';
+import { AuthService } from '@services/auth.service';
+import { IChatMsg, IUser } from '@models/index';
+import { userAva, partnerAva } from './avatar';
 
 @Component({
   selector: 'app-chat',
@@ -42,7 +41,7 @@ export class ChatPage implements AfterViewInit, OnDestroy {
       untilDestroyed(this),
       switchMap((paramMap: Params) => {
         let { id } = paramMap;
-        return this.userSvc.getDbUserById(id);
+        return this.userSvc.getDbUserById(id) as Observable<IUser>;
       })
     );
     this.messages$ = this.getMessagesForCurrPartner().pipe(

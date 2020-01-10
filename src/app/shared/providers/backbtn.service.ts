@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
 import { Router, RouterEvent, NavigationStart } from '@angular/router';
 import { Platform } from '@ionic/angular';
+import { BackButtonEvent, BackButtonEventDetail } from '@ionic/core';
 import { Subject, of, Observable, throwError } from 'rxjs';
 import { takeUntil, tap, filter, concatMap, combineLatest, map } from 'rxjs/operators';
 
 import { UserService } from './user.service';
 import { ToastrService } from './toastr.service';
 import { AuthService } from './auth.service';
-import { BackButtonEvent, BackButtonEventDetail } from '@ionic/core';
 
 @Injectable({
   providedIn: 'root'
