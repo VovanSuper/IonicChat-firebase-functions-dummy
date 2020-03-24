@@ -82,7 +82,7 @@
     "@angular/platform-browser": "^8.2.14",
     "@angular/platform-browser-dynamic": "^8.2.14",
     "@angular/router": "^8.2.14",
-    "@ionic-native/camera": "^5.19.1",
+    "@ionic-native/camera": "^5.23.0",
     "@ionic-native/core": "^5.19.1",
     "@ionic-native/firebase-authentication": "^5.19.1",
     "@ionic-native/firebase-x": "^5.19.1",
